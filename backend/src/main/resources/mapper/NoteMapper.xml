@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 这里 namespace 必须是你的 NoteMapper 全路径 -->
+<mapper namespace="org.example.fanxing.mapper.NoteMapper">
+
+    <!-- 根据多个标签名分页查询笔记 -->
+    <select id="selectNotesByTagNames" resultType="org.example.fanxing.entity.Note">
+        SELECT DISTINCT n.*
+        FROM note n
+
+        JOIN note_tag_rel rel
+        ON n.id = rel.note_id
+
+        JOIN tag t
+        ON rel.tag_id = t.id
+
+        WHERE n.user_id = #{userId}
+
+        AND n.is_deleted = 0
+        AND t.name IN
+        <foreach collection="tagNames" open="(" separator="," close=")" item="name">
+            #{name}
+        </foreach>
+
+        ORDER BY n.create_time DESC
+    </select>
+
+</mapper>
